@@ -33,8 +33,8 @@ int main(){
 	int dist1=0;
 	int dist2=0;
 	int dist3=0;
-        int PdaRegValue;
-        double PdaVoltageValue;
+    int PdaRegValue;
+    double PdaVoltageValue;
 	double localTemp, remoteTemp;
 	int tmpMode=0;
 
@@ -95,9 +95,10 @@ int main(){
 				else
 				{
 					printf("reg_state=0x%04x (%d)",state,state);
-					state=state/256;
+
+					state=state/128;
 					printf("\nglobal_state=0x%x (%d)",state,state);
-					if (state==0x100) printf(" => SDTBY \n");
+					if (state==0x01) printf(" => SDTBY \n");
 					else if (state==0x02) printf(" => WAKE_UP_IF \n");
 					else if (state==0x04) printf(" => IDLE_IF \n");
 					else if (state==0x08) printf(" => WAKE_UP_ALL \n");
@@ -236,19 +237,18 @@ int read_sensor_feedback(ModuleCtrl *moduleCtrl)
 	else if (Value>0x6000) printf("\n");
 	else if (Value>0x5200) printf(" => SNAPPY 5M \n");
 	else if (Value>0x5100) printf(" => SNAPPY 2M \n");
+	else if (Value>0x4800) printf(" => EMERALD GEN2 12M/8.9M \n");
 	else if (Value>0x4200) printf(" => EMERALD 10M/8.9M \n");
 	else if (Value>0x4100) printf(" => EMERALD 16M/12M \n");
 	else printf(" \n");	
 
 	//READ SENSOR STATE
-	Address = 0x0053;
 	Value = 0;
-	// moduleCtrl->readReg(Address, &Value);
-	// printf("reg_state=0x%04x (%d)",Value,Value);
 	moduleCtrl->read_sensor_state(&Value);
-	Value=Value/256;
+	printf("reg_state=0x%04x (%d)",Value,Value);
+	Value=Value/128;
 	printf("\nglobal_state=0x%x (%d)",Value,Value);
-	if (Value==0x100) printf(" => SDTBY \n");
+	if (Value==0x01) printf(" => SDTBY \n");
 	else if (Value==0x02) printf(" => WAKE_UP_IF \n");
 	else if (Value==0x04) printf(" => IDLE_IF \n");
 	else if (Value==0x08) printf(" => WAKE_UP_ALL \n");
@@ -260,12 +260,12 @@ int read_sensor_feedback(ModuleCtrl *moduleCtrl)
 	
 
 	//Read line length fb
-	Address = 0x0052;
+	Address = 0x0067;
 	Value = 0;
 	moduleCtrl->readReg(Address, &Value);
 	printf("@0x%04x fb_line_length=0x%04x / %d\n", Address, Value, Value);
 	//Read error fb
-	Address = 0x0054;
+	Address = 0x0069;
 	Value = 0;
 	moduleCtrl->readReg(Address, &Value);
 	printf("@0x%04x fb_error=0x%04x / %d", Address, Value, Value);
@@ -279,22 +279,22 @@ int read_sensor_feedback(ModuleCtrl *moduleCtrl)
 	else printf(" \n");		
 
 	//Read tint fb
-	Address = 0x0055;
+	Address = 0x006D;
 	Value = 0;
 	moduleCtrl->readReg(Address, &Value);
 	printf("@0x%04x fb_reg_tint_ll=0x%04x / %d\n", Address, Value, Value);
 	//Read spy_tint_1_ll fb
-	Address = 0x0057;
+	Address = 0x006A;
 	Value = 0;
 	moduleCtrl->readReg(Address, &Value);
 	printf("@0x%04x fb_reg_spy_tint_1_ll=0x%04x / %d\n", Address, Value, Value);
 	//Read spy_tint_1_ck fb
-	Address = 0x0058;
+	Address = 0x006B;
 	Value = 0;
 	moduleCtrl->readReg(Address, &Value);
 	printf("@0x%04x fb_reg_spy_tint_1_ck=0x%04x / %d\n", Address, Value, Value);
 	//Read frame_period fb
-	Address = 0x0056;
+	Address = 0x006C;
 	Value = 0;
 	moduleCtrl->readReg(Address, &Value);
 	printf("@0x%04x fb_reg_frame_period=0x%04x / %d\n", Address, Value, Value);
